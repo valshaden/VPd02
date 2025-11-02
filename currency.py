@@ -64,16 +64,13 @@ def show_rates(base, targets=["RUB", "EUR", "GBP"]):
 
 def cli():
     while True:
-        print("\n1. Обновить курсы валют")
-        print("2. Показать курсы валют")
+        print("\n1. Показать курсы валют")
         print("0. Выход")
         choice = input("Выберите действие: ").strip()
         
         if choice == "0":
             break
         elif choice == "1":
-            update_currency_rates()
-        elif choice == "2":
             base = input("Введите базовую валюту: ").upper().strip()
             if base:
                 show_rates(base)
