@@ -48,14 +48,4 @@ def read_from_file():
         return None
 
 if __name__ == "__main__":
-    all_data = {}
-    for currency in FAVORITE_CURRENCIES:
-        rate = get_currency_rate(currency)
-        if rate is not None:
-            all_data[currency] = rate
-            print(f"Курс {currency}: получен")
-        else:
-            print(f"Не удалось получить курс для {currency}")
-    save_to_file(all_data)
-
-
+    update_currency_rates()
