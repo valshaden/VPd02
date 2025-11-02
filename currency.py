@@ -3,7 +3,7 @@ import json
 
 FAVORITE_CURRENCIES = ["USD", "EUR", "GBP", "RUB"]
 
-def get_currency_rate(currency_code: str) -> float:
+def get_currency_rate(currency_code: str):
     URL = f"https://open.er-api.com/v6/latest/{currency_code}"
 
     try:
@@ -11,28 +11,41 @@ def get_currency_rate(currency_code: str) -> float:
     except requests.RequestException as e:
         print(f"Ошибка запроса: {e}")
         return None
-    if response. status_code != 200: 
-        print(f"Ошибка: {response. status_code}")
+    if response.status_code != 200: 
+        print(f"Ошибка: {response.status_code}")
         return None
     
-    data = response.json()
-    return data
+    try:
+        data = response.json()
+        return data
+    except json.JSONDecodeError:
+        print("Ошибка: некорректный JSON")
+        return None
     
 def save_to_file(data: dict):
-    with open("currency_rate.json", "w") as file:
-        json.dump(data, file)
+    try:
+        with open("currency_rate.json", "w") as file:
+            json.dump(data, file)
+    except (OSError, PermissionError, json.JSONEncodeError) as e:
+        print(f"Ошибка сохранения: {e}")
 
 def update_currency_rates():
     all_data = {}
     for currency in FAVORITE_CURRENCIES:
         rate = get_currency_rate(currency)
-        all_data[currency] = rate
+        if rate is not None:
+            all_data[currency] = rate
+
     save_to_file(all_data)
     print(f"Данные обновлены в currency_rate.json")
 
 def read_from_file():
-    with open("currency_rate.json", "r", encoding="utf-8") as file:
-        return json.load(file)
+    try:
+        with open("currency_rate.json", "r", encoding="utf-8") as file:
+            return json.load(file)
+    except (FileNotFoundError, json.JSONDecodeError, PermissionError) as e:
+        print(f"Ошибка чтения: {e}")
+        return None
 
 if __name__ == "__main__":
     all_data = {}
